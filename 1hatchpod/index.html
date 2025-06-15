@@ -1,33 +1,152 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>&lt;model-viewer&gt; template</title>
-    <meta charset="utf-8">
-    <meta name="description" content="&lt;model-viewer&gt; template">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link type="text/css" href="./styles.css" rel="stylesheet"/>
+    <title>&lt;model-viewer&gt; Animation & Variant Controls</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /* Container styles for buttons, fixed and visible */
+      .camera-controls,
+      .animation-controls,
+      .variant-controls {
+        position: fixed;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border-radius: 6px;
+        left: 20px;
+        z-index: 9999;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+      .camera-controls {
+        bottom: 120px;
+      }
+      .animation-controls {
+        bottom: 70px;
+      }
+      .variant-controls {
+        bottom: 20px;
+      }
+      button {
+        padding: 8px 14px;
+        margin-right: 8px;
+        font-size: 14px;
+        border: none;
+        background-color: #444;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #666;
+      }
+    </style>
   </head>
   <body>
-    <!-- <model-viewer> HTML element -->
-    <model-viewer src="1hatchpod.glb" ar ar-modes="scene-viewer webxr quick-look" camera-controls tone-mapping="neutral" poster="poster.png" shadow-intensity="1" autoplay animation-name="Default(39F46F8C-08C4-46D4-98E0-48B184D1D01D)Action">
-      <button class="Hotspot" slot="hotspot-1" data-surface="0 0 1795 1782 1781 0.038 0.588 0.374" data-visibility-attribute="visible">
-          <div class="HotspotAnnotation">TOP</div>
-      </button><button class="Hotspot" slot="hotspot-2" data-surface="1 0 365 357 356 0.763 0.005 0.232" data-visibility-attribute="visible">
-          <div class="HotspotAnnotation">BOTTOM
-          </div>
+    <model-viewer
+      id="modelViewer"
+      src="1hatchpod.glb"
+      ar
+      ar-modes="scene-viewer webxr quick-look"
+      camera-controls
+      tone-mapping="neutral"
+      poster="poster.png"
+      shadow-intensity="1"
+      autoplay
+      camera-orbit="10.23deg 79.05deg 0.2823m"
+      field-of-view="30deg"
+      style="width: 100vw; height: 100vh;"
+      animation-name="Default(39F46F8C-08C4-46D4-98E0-48B184D1D01D)Action"
+    >
+      <button
+        class="Hotspot"
+        slot="hotspot-1"
+        data-surface="0 0 1795 1782 1781 0.038 0.588 0.374"
+        data-visibility-attribute="visible"
+      >
+        <div class="HotspotAnnotation">TOP</div>
       </button>
+      <button
+        class="Hotspot"
+        slot="hotspot-2"
+        data-surface="1 0 365 357 356 0.763 0.005 0.232"
+        data-visibility-attribute="visible"
+      >
+        <div class="HotspotAnnotation">BOTTOM</div>
+      </button>
+
       <div class="progress-bar hide" slot="progress-bar">
-          <div class="update-bar"></div>
+        <div class="update-bar"></div>
       </div>
-      <button slot="ar-button" id="ar-button">
-          View in your space
-      </button>
+
+      <button slot="ar-button" id="ar-button">View in your space</button>
+
       <div id="ar-prompt">
-          <img src="ar_hand_prompt.png">
+        <img src="ar_hand_prompt.png" alt="AR Hand Prompt" />
       </div>
-    </model-viewer>  
-    <script src="script.js"></script>
-    <!-- Loads <model-viewer> for browsers: -->
+    </model-viewer>
+
+    <!-- Camera Position Buttons -->
+    <div class="camera-controls">
+      <button onclick="setCamera('front')">Front</button>
+      <button onclick="setCamera('side')">Side</button>
+      <button onclick="setCamera('top')">Top</button>
+    </div>
+
+    <!-- Animation Control Buttons -->
+    <div class="animation-controls">
+      <button onclick="playAnimation('Default(39F46F8C-08C4-46D4-98E0-48B184D1D01D)Action')">
+        Open &amp; Close
+      </button>
+      <button onclick="playAnimation('Default(39F46F8C-08C4-46D4-98E0-48B184D1D01D)Action.001')">
+        Explode
+      </button>
+      <button onclick="stopAnimation()">Stop</button>
+    </div>
+
+    <!-- Variant Change Buttons -->
+    <div class="variant-controls">
+      <button onclick="setVariant('v1')">v1</button>
+      <button onclick="setVariant('v2')">v2</button>
+      <button onclick="setVariant('v3')">v3</button>
+    </div>
+
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    <script>
+      const modelViewer = document.getElementById("modelViewer");
+
+      function setCamera(view) {
+        switch (view) {
+          case "front":
+            modelViewer.cameraOrbit = "10.23deg 79.05deg 0.2823m";
+            modelViewer.fieldOfView = "30deg";
+            break;
+          case "side":
+            modelViewer.cameraOrbit = "-76.26deg 78.76deg 0.2823m";
+            modelViewer.fieldOfView = "30deg";
+            break;
+          case "top":
+            modelViewer.cameraOrbit = "-121.8deg 0.0000573deg 0.2823m";
+            modelViewer.fieldOfView = "30deg";
+            break;
+        }
+      }
+
+      function playAnimation(name) {
+        modelViewer.animationName = name;
+        modelViewer.play();
+      }
+
+      function stopAnimation() {
+        modelViewer.pause();
+      }
+
+      function setVariant(variant) {
+        // This depends on your GLB and model setup.
+        // Example: modelViewer.variantName = variant;
+        // Make sure variants exist and names match your model.
+        modelViewer.variantName = variant;
+      }
+    </script>
   </body>
 </html>
